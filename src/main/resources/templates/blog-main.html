@@ -1,0 +1,26 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org" xmlns="http://www.w3.org/1999/html">
+    <head>
+     <title th:text=${title}></title> <!-- титуольник-->
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css">
+    </head>
+    <body>
+     <header th:insert="blocks/header :: header"></header><!--th:insert="blocks/header путь до файла . header название файла
+ который мы будем юзать как header . чтоб не создавать каждый раз т.к. он у нас общий-->
+       <div class = "container mt-5"> <!--  mt - отступ сверху 50 пикс -->
+         <h1>Блог сайта</h1> <!--  --><!-- Заголовок 1 уровня-->
+           <div th:each="element : ${posts}" class="alert alert-info mt-2"><!-- перебераю все posts (записи) который к нам приходят из БД-->
+               <h3 th:text="${element.title}"></h3> <!-- для каждой записи я вывожу название статьи -->
+               <p th:text="${element.anons}"></p> <!-- вывожу анонас татьи -->
+               <p><b>Просмотры: </b><span th:text="${element.views}"/></p>
+               <p><b>Создатель статьи: </b><span th:text="${element.nickname}"/></p>
+               <a th:href="'/blog/' + ${element.id}" class="btn btn-warning">Детальнее</a> <!-- делаю ссылку на прочтение более детальной информации для каждой записи . для первой
+               записи будет ссылка /blog/1 для второй записи /blog/2 и т.д.-->
+
+
+           </div>
+       </div>
+       <div th:insert="blocks/footer :: footer"></div>
+    </body>
+</html>
