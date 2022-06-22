@@ -142,7 +142,7 @@ public class BlogController {
     }
 
     @Autowired // для переменной, которая будет ссылаться на репозиторий
-    private LoginPasswordRepository loginPasswordRepository; //переменная, которая будет ссылаться на репозиторий
+    private LoginPasswordRepository loginPasswordRepository ; //переменная, которая будет ссылаться на репозиторий
 
     @GetMapping("/authorization")
     public String authorization (Model model) {
