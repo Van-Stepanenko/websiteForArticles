@@ -158,7 +158,7 @@ public class BlogController {
         Iterable<LoginPassword> allLoginPasswords = loginPasswordRepository.findAll();
         String loginUser = loginPassword.getLogin();
         String passwordUser = loginPassword.getPassword();
-        Long logIsCorrect = Authorization.loginFound(loginUser,passwordUser);// отправляем на проверку логин и пароль/ получаем id авториз пользователя
+        Long logIsCorrect = Authorization.loginFound(loginUser,passwordUser);//  отправляем на проверку логин и пароль/ получаем id авториз пользователя
         String idForCookie = String.valueOf(logIsCorrect);
         if (logIsCorrect == -1){ // логин не найденн
             return "redirect:/authorization#user_not_found";
