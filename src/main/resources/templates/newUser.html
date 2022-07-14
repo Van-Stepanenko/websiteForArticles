@@ -88,6 +88,47 @@
       }
       .close:hover {background: #e6e6ff;}
     </style>
+<style>
+      #LogIsOk {
+        background: rgba(102, 102, 102, 0.5);
+        width: 100%;
+        height: 100%;
+        position: absolute;
+        top: 0;
+        left: 0;
+        display: none;
+      }
+      #okno3 {
+        width: 300px;
+        height: 50px;
+        text-align: center;
+        font-size: 12pt;
+        padding: 15px;
+        border: 3px solid #0000cc;
+        border-radius: 10px;
+        color: #0000cc;
+        position: absolute;
+        top: 0;
+        right: 0;
+        bottom: 0;
+        left: 0;
+        margin: auto;
+        background: #fff;
+      }
+      #LogIsOk:target {display: block;}
+      .close {
+        display: inline-block;
+        border: 1px solid #0000cc;
+        color: #0000cc;
+        padding: 0 12px;
+        margin: 10px;
+        text-decoration: none;
+        background: #f2f2f2;
+        font-size: 20pt;
+        cursor:pointer;
+      }
+      .close:hover {background: #e6e6ff;}
+    </style>
 
 <div id="newUserError">
     <div id="okno">
@@ -99,6 +140,13 @@
     <div id="okno2">
         <h6>Некорректный пароль</h6>  <br>
         <a href="#" class="btn btn-warning mt-2">Окей</a>
+    </div>
+</div>
+
+<div id="LogIsOk">
+    <div id="okno3">
+        <h6>Вы зарегестрированы</h6>  <br>
+        <a href="/" class="btn btn-warning mt-2">Окей</a>
     </div>
 </div>
 

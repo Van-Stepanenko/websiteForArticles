@@ -28,6 +28,7 @@ import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.*;
 
+//https://www.youtube.com/watch?v=ZJUAR8Xe6CY&ab_channel=%D0%93%D0%BE%D1%88%D0%B0%D0%94%D1%83%D0%B4%D0%B0%D1%80%D1%8C
 
 @Controller
 public class BlogController {
@@ -121,11 +122,8 @@ public class BlogController {
 
     @PostMapping("/blog/{dynamicID}/edit") //Кнопка (Обновить статью)
     public String blogPostUpdate(@PathVariable(value = "dynamicID") long dynamicID, @RequestParam String title,
-                                 @RequestParam String anons, @RequestParam String full_text, Model model,HttpServletRequest request, HttpServletResponse response) throws SQLException, ClassNotFoundException {
-
-
-
-
+                                 @RequestParam String anons, @RequestParam String full_text, Model model,
+                                 HttpServletRequest request, HttpServletResponse response) throws SQLException, ClassNotFoundException {
         Post post = postRepository.findById(dynamicID).orElseThrow();//orElseThrow() вызывает исключение, если функция не найдена
         post.setTitle(title); //  ***.setTitle беется из Post.java как сеттер. ***(title) - принимаем чуть выше в ( @RequestParam String title)
         post.setAnons(anons);
@@ -133,6 +131,27 @@ public class BlogController {
         postRepository.save(post); //обновляем уже существующуб запись
         return "redirect:/blog";
     }
+
+    @PostMapping("/blog/{dynamicID}/edit/nameUpdate")// Кнопка обнова никнейма
+    public String blogPostUpdateUsername(@PathVariable(value = "dynamicID") long dynamicID, Model model, HttpServletRequest request) {
+        long idUser = -1;
+        String nickname = "foo";
+        try {
+            Cookie[] cookies = request.getCookies();
+            for (Cookie cookie : cookies){
+                idUser = Long.parseLong(cookie.getValue());
+
+                nickname = SQLrequest.getNicknameById(idUser); // присвоим nickname к статье
+            }
+        }catch (Exception e1){
+            System.out.println("cookie has expired");
+        }
+        Post post = postRepository.findById(dynamicID).orElseThrow();//orElseThrow() вызывает исключение, если функция не найдена
+        post.setNickname(nickname);
+        postRepository.save(post);
+        return "redirect:/blog";
+    }
+
 
     @PostMapping("/blog/{dynamicID}/remove")// Кнопка (Удалить)
     public String blogPostDelete(@PathVariable(value = "dynamicID") long dynamicID, Model model) {
@@ -145,8 +164,23 @@ public class BlogController {
     private LoginPasswordRepository loginPasswordRepository ; //переменная, которая будет ссылаться на репозиторий
 
     @GetMapping("/authorization")
-    public String authorization (Model model) {
-        return "authorization";
+    public String authorization (Model model,  HttpServletRequest request, HttpServletResponse response) {
+
+
+        String nameCookies = "";
+        try {
+            Cookie[] cookies = request.getCookies();
+            for (Cookie cookie : cookies){
+                nameCookies = cookie.getName(); //нашли имя куки( логин пользователя)
+            }
+
+        }catch (Exception e1){
+            System.out.println("cookie has expired"); // если cookies авторизации нет, идем в авторизацию
+            return "authorization";
+        }
+
+
+        return "/deAuthorization";
     }
 
 
@@ -174,34 +208,57 @@ public class BlogController {
             //https://www.youtube.com/watch?v=Jnd4PQt44j0&ab_channel=letsCode
             return "redirect:/authorization#correct";
         }
-        return "home";
-    }
-
-
-
-    @GetMapping("/authorization#correct")//todo прекрутить таймер для перехода домой после окошка поздравления
-    public String authorizationCorrect (Model model) {
-
-        System.out.println("foo");
-        try {
-            Thread.sleep(5000);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
         return "/home";
     }
 
-    @PostMapping ("/authorization#correct")//todo прекрутить таймер для перехода домой после окошка поздравления
-    public String authorizationCorrect1 (Model model) {
 
-        System.out.println("foo");
+
+    @GetMapping("/authorization/redact-user")
+    public String redactUserInf (Model model) {
+        return "redact-user";
+    }
+
+
+    @PostMapping("/authorization/redact-user")
+    public String redactUserInfo( @RequestParam String password, @RequestParam String nickname,
+                                 HttpServletRequest request, HttpServletResponse response,  Model model) {
+
+        long idUser = -1;
         try {
-            Thread.sleep(5000);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
+            Cookie[] cookies = request.getCookies();
+            for (Cookie cookie : cookies){
+                idUser = Long.parseLong(cookie.getValue()); //
+
+            }
+            System.out.println("ваш ади" + idUser);
+        }catch (Exception e1){
+            System.out.println("cookie has expired" + idUser);
         }
+        LoginPassword loginPassword = loginPasswordRepository.findById(idUser).orElseThrow();
+        loginPassword.setPassword(password);
+        loginPassword.setNickname(nickname);
+
+        loginPasswordRepository.save(loginPassword);
+
+        /* try {
+            LoginPassword loginPassword = new LoginPassword(login, password, nickname);
+            Post
+
+            Post post = postRepository.findById(dynamicID).orElseThrow();//orElseThrow() вызывает исключение, если функция не найдена
+            post.setTitle(title); //  ***.setTitle беется из Post.java как сеттер. ***(title) - принимаем чуть выше в ( @RequestParam String title)
+            post.setAnons(anons);
+            post.setFull_text(full_text);
+            postRepository.save(post); //обновляем уже существующуб запись
+            return "redirect:/blog";
+        } catch (Exception e1) {
+
+            return "redirect:/newUser#newUserError";
+        } */
+
         return "/home";
     }
+
+
 
     @GetMapping("/deAuthorization")
     public String deAuthorization (Model model) {
@@ -223,10 +280,11 @@ public class BlogController {
         response.addCookie(cookie1);
         }catch (Exception e1){
             System.out.println("cookie has expired");
+            return "redirect:/deAuthorization#user_not_found";
         }
 
 
-        return "/home";
+        return "redirect:/deAuthorization#deAythorization";
     }
 
 
@@ -251,7 +309,7 @@ public class BlogController {
             model.addAttribute("post", res);
 
             loginPasswordRepository.save(loginPassword);
-            return "home";
+            return "redirect:/newUser#LogIsOk";
             }
         }
         catch (Exception e1){

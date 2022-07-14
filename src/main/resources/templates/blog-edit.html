@@ -8,6 +8,63 @@
 <body>
 <header th:insert="blocks/header :: header"></header><!--th:insert="blocks/header путь до файла . header название файла
  который мы будем юзать как header . чтоб не создавать каждый раз т.к. он у нас общий-->
+
+<style>
+      #nameUpdate {
+        background: rgba(102, 102, 102, 0.5);
+        width: 100%;
+        height: 100%;
+        position: absolute;
+        top: 0;
+        left: 0;
+        display: none;
+      }
+      #okno {
+        width: 300px;
+        height: 50px;
+        text-align: center;
+        font-size: 12pt;
+        padding: 15px;
+        border: 3px solid #0000cc;
+        border-radius: 10px;
+        color: #0000cc;
+        position: absolute;
+        top: 0;
+        right: 0;
+        bottom: 0;
+        left: 0;
+        margin: auto;
+        background: #fff;
+      }
+      #nameUpdate:target {display: block;}
+      .close {
+        display: inline-block;
+        border: 1px solid #0000cc;
+        color: #0000cc;
+        padding: 0 12px;
+        margin: 10px;
+        text-decoration: none;
+        background: #f2f2f2;
+        font-size: 20pt;
+        cursor:pointer;
+      }
+      .close:hover {background: #e6e6ff;}
+    </style>
+
+<div id="nameUpdate">
+    <div id="okno">
+        <h6>обновить никнейм на ваш текущий?</h6>  <br>
+
+        <div th:each="element : ${post}">
+            <form th:action="'/blog/' + ${element.id} + '/edit'+'/nameUpdate'" method="post"> <!-- все продящее по адресу ремувается -->
+                <button class="btn btn-warning mt-2" type="submit">Обновить</button> <!-- кнопка / type="submit" - перезагружает страницу и отправляет данные -->
+                <a href="#" class="btn btn-warning mt-2">Отмена</a>
+            </form>
+        </div>
+    </div>
+</div>
+
+
     <div class = "container mt-5 mb-5"> <!--  mt - отступ сверху 50 пикс mb отступ снизу 50 пикс -->
         <h1>Редактирование Статьи</h1> <!--  --><!-- Заголовок 1 уровня-->
         <div th:each="element : ${post}"> <!-- создали цикл для переберания таблиц -->
@@ -15,6 +72,8 @@
                 <input type="text" th:value="${element.title}" name="title" placeholder="введите название статьи" class="form-control"><br> <!-- в th:value="${element.title}" будет подставляться название статьи-->
                 <input type="text" th:value="${element.anons}" name="anons" placeholder="введите анонс статьи" class="form-control"><br>
                 <textarea name="full_text"  placeholder="введите полный текст статьи" class="form-control" th:text="${element.full_text}"/><br> <!-- в <textarea> по другому нужно вставлять текст, нежели в <input> -->
+                <p><b>Ваш никнейм при создании статьи: </b><span th:text="${element.nickname}"/></p>
+                <a href="#nameUpdate" class="btn btn-warning">Обновить Никнейм</a>
                 <button type="submit" class="btn btn-success">Обновить статью</button>  <!-- добавили кнопку обновления страницы -->
             </form>
         </div>
