@@ -129,5 +129,35 @@ public class SQLrequest {
 
         return stringValue;
     }
+    public static String getLoginByNickname(String nickname) throws ClassNotFoundException, SQLException {
+
+        try {
+            Class.forName("org.postgresql.Driver"); //подключаем драйвер для работы java приложения с postgresql
+
+        } catch (ClassNotFoundException throwables){
+            throwables.printStackTrace();
+        }
+        String stringValue = "";
+        try {
+            Connection conn = DriverManager.getConnection("jdbc:postgresql://localhost:5432/postgres",
+                    "postgres","postgres");
+
+            Statement stmt = conn.createStatement();
+            ResultSet res = stmt.executeQuery("SELECT * FROM login_password WHERE login_password.nickname ='"+nickname+"' "); //sqlRequests - команда на базу данных. rs - будет значение
+
+            // https://metanit.com/java/database/2.5.php сайт с командами SELECT
+
+            while (res.next()){ // пока в res есть доступные строки, будет выполнятся цикл , который будет переходить к следуюзей строке в наборе
+                stringValue = res.getString("login");// //дает значение из колонки с названием nickname
+            }
+
+
+            return stringValue;
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
+        }
+
+        return stringValue;
+    }
 
 }

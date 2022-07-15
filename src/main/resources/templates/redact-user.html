@@ -57,6 +57,54 @@
 
 <header th:insert="blocks/header :: header"></header><!--th:insert="blocks/header путь до файла . header название файла
  который мы будем юзать как header . чтоб не создавать каждый раз т.к. он у нас общий-->
+<style>
+      #nicknameIncorrect {
+        background: rgba(102, 102, 102, 0.5);
+        width: 100%;
+        height: 100%;
+        position: absolute;
+        top: 0;
+        left: 0;
+        display: none;
+      }
+      #okno {
+        width: 300px;
+        height: 80px;
+        text-align: center;
+        font-size: 12pt;
+        padding: 15px;
+        border: 3px solid #0000cc;
+        border-radius: 10px;
+        color: #0000cc;
+        position: absolute;
+        top: 0;
+        right: 0;
+        bottom: 0;
+        left: 0;
+        margin: auto;
+        background: #fff;
+      }
+      #nicknameIncorrect:target {display: block;}
+      .close {
+        display: inline-block;
+        border: 1px solid #0000cc;
+        color: #0000cc;
+        padding: 0 12px;
+        margin: 10px;
+        text-decoration: none;
+        background: #f2f2f2;
+        font-size: 20pt;
+        cursor:pointer;
+      }
+      .close:hover {background: #e6e6ff;}
+    </style>
+<div id="nicknameIncorrect">
+    <div id="okno">
+        <h6>Некорректный никнейм</h6>  <br>
+        <a href="#" class="btn btn-success">Окей</a><br>
+
+    </div>
+</div>
     <div class = "container mt-5 mb-5"> <!--  mt - отступ сверху 50 пикс mb отступ снизу 50 пикс -->
         <h1>Редактирование учетной записи</h1> <!--  --><!-- Заголовок 1 уровня-->
         <form method="post"> <!-- post метод - срабатывает по нажатии кнопки -->

@@ -61,17 +61,21 @@ public class BlogController {
         String nickname = "foo";
         try {
             Cookie[] cookies = request.getCookies();
-            for (Cookie cookie : cookies){
+            for (Cookie cookie : cookies) {
                 idUser = Long.parseLong(cookie.getValue()); // присвоим id пользователя( учетки) к статье
 
                 nickname = SQLrequest.getNicknameById(idUser); // присвоим nickname к статье
             }
-        }catch (Exception e1){
+        } catch (Exception e1) {
             System.out.println("cookie has expired");
         }
-        Post post = new Post(title, anons, full_text, idUser, nickname); // создали объект внутри java
-        postRepository.save(post); // обращаемся в рпозиторий ( в нашем случае postRepository , вызываем  save для сохранения объекта post
-        return "redirect:/blog"; //будет кидать на страничку блог после нажатия на кнопку добавить
+        if (idUser > 0) {
+            Post post = new Post(title, anons, full_text, idUser, nickname); // создали объект внутри java
+            postRepository.save(post); // обращаемся в рпозиторий ( в нашем случае postRepository , вызываем  save для сохранения объекта post
+            return "redirect:/blog"; //будет кидать на страничку блог после нажатия на кнопку добавить
+        }
+        else  return "redirect:/blog/add#user_not_found";
+
     }
 
 
@@ -221,43 +225,33 @@ public class BlogController {
 
     @PostMapping("/authorization/redact-user")
     public String redactUserInfo( @RequestParam String password, @RequestParam String nickname,
-                                 HttpServletRequest request, HttpServletResponse response,  Model model) {
+                                 HttpServletRequest request, HttpServletResponse response,  Model model) throws SQLException, ClassNotFoundException {
 
         long idUser = -1;
         try {
             Cookie[] cookies = request.getCookies();
-            for (Cookie cookie : cookies){
+            for (Cookie cookie : cookies) {
                 idUser = Long.parseLong(cookie.getValue()); //
 
             }
-            System.out.println("ваш ади" + idUser);
-        }catch (Exception e1){
+        } catch (Exception e1) {
             System.out.println("cookie has expired" + idUser);
         }
-        LoginPassword loginPassword = loginPasswordRepository.findById(idUser).orElseThrow();
-        loginPassword.setPassword(password);
-        loginPassword.setNickname(nickname);
 
-        loginPasswordRepository.save(loginPassword);
+        boolean nicknameIsCorrect = NicknameIsCorrect.loginFound(idUser, nickname);
+        System.out.println(nicknameIsCorrect);
 
-        /* try {
-            LoginPassword loginPassword = new LoginPassword(login, password, nickname);
-            Post
+        if (nicknameIsCorrect) {
+            LoginPassword loginPassword = loginPasswordRepository.findById(idUser).orElseThrow();
+            loginPassword.setPassword(password);
+            loginPassword.setNickname(nickname);
 
-            Post post = postRepository.findById(dynamicID).orElseThrow();//orElseThrow() вызывает исключение, если функция не найдена
-            post.setTitle(title); //  ***.setTitle беется из Post.java как сеттер. ***(title) - принимаем чуть выше в ( @RequestParam String title)
-            post.setAnons(anons);
-            post.setFull_text(full_text);
-            postRepository.save(post); //обновляем уже существующуб запись
-            return "redirect:/blog";
-        } catch (Exception e1) {
+            loginPasswordRepository.save(loginPassword);
 
-            return "redirect:/newUser#newUserError";
-        } */
-
-        return "/home";
+            return "/home";
+        }
+        else return "redirect:/authorization/redact-user#nicknameIncorrect";
     }
-
 
 
     @GetMapping("/deAuthorization")
@@ -299,8 +293,8 @@ public class BlogController {
             LoginPassword loginPassword = new LoginPassword(login, password, nickname);
 
             Iterable<LoginPassword> loginPasswords = loginPasswordRepository.findAll(); // todo скорее всего не нужно
-
             String passIsNotNull = loginPassword.getPassword();
+            //String nicknameCorrect = loginPassword.getNickname();
             if (passIsNotNull == ""){
                 return "redirect:/newUser#passIsNotCorrect";
             }
