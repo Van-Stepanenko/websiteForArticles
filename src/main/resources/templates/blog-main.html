@@ -14,6 +14,10 @@
                <h3 th:text="${element.title}"></h3> <!-- для каждой записи я вывожу название статьи -->
                <p th:text="${element.anons}"></p> <!-- вывожу анонас татьи -->
                <p><b>Просмотры: </b><span th:text="${element.views}"/></p>
+               <p><b>Понравилось: </b><span th:text="${element.likeBlog}"/></p>
+               <form th:action="'/blog/' + ${element.id} + '/likeBlog'" method="post">
+                   <button type="submit" class="btn btn-success">Лайк</button><br>
+               </form>
                <p><b>Создатель статьи: </b><span th:text="${element.nickname}"/></p>
                <a th:href="'/blog/' + ${element.id}" class="btn btn-warning">Детальнее</a> <!-- делаю ссылку на прочтение более детальной информации для каждой записи . для первой
                записи будет ссылка /blog/1 для второй записи /blog/2 и т.д.-->

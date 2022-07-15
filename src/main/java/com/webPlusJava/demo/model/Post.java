@@ -4,6 +4,8 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import java.util.Collections;
+import java.util.List;
 
 @Entity //показывает, что это модель отвечает за определенную таблицу в БД bean
 public class Post { // создаем таблицу с разными свойствами
@@ -13,11 +15,21 @@ public class Post { // создаем таблицу с разными свой�
     @GeneratedValue(strategy = GenerationType.AUTO) //генерирует каждый раз новое значение внутри поля
     private Long id; //обычно id делают Long
 
-    private Long idUser;
+    public Long idUser;
+    public  int likeBlog;
 
     private String title, anons, full_text, nickname;
 
+
     private int views;
+
+    public int getLikeBlog() {
+        return likeBlog;
+    }
+
+    public void setLikeBlog(int likeBlog) {
+        this.likeBlog = likeBlog;
+    }
 
     public String getNickname() {
         return nickname;
@@ -78,11 +90,20 @@ public class Post { // создаем таблицу с разными свой�
     public Post() { // обязательно должен присутствовать пустой конструктор! для корректной работы. В любой моделе тоакое толжно быть
     }
 
-    public Post(String title, String anons, String full_text, long idUser, String nickname) { // служит чтоб передать в BlogController.java данные на основе анонса  @PostMapping
+    public Post(String title, String anons, String full_text, long idUser, String nickname, int likeBlog) { // служит чтоб передать в BlogController.java данные на основе анонса  @PostMapping
         this.title = title;
         this.anons = anons;
         this.full_text = full_text;
         this.idUser = idUser;
         this.nickname = nickname;
+
     }
+    public Post(int likeBlog){
+        this.likeBlog = likeBlog;
+    }
+   /* public Post(Long idLike){
+        this.idLike = Collections.singletonList(idLike);
+    } */
+
+
 }

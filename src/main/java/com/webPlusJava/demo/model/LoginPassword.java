@@ -17,6 +17,16 @@ public class LoginPassword { // создаем таблицу с разными 
 
     private int views;
 
+    public String idBlogLike;
+
+    public String getIdBlogLike() {
+        return idBlogLike;
+    }
+
+    public void setIdBlogLike(String idBlogLike) {
+        this.idBlogLike = idBlogLike;
+    }
+
     public String getNickname() {
         return nickname;
     }
@@ -77,4 +87,7 @@ public class LoginPassword { // создаем таблицу с разными 
         this.id=id;
     }
 
+    public LoginPassword(String idBlogLike){
+        this.idBlogLike = idBlogLike;
+    }
 }

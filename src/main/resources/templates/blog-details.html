@@ -69,7 +69,9 @@
             <h1 th:text="${element.title}"/>
             <p th:text="${element.full_text}"/>
             <p><b>Просмотры: </b><span th:text="${element.views}"/></p>
-            <a th:href="'/blog/' + ${element.id} + '/edit'" class="btn btn-warning">Редактировать</a>
+            <p><b>Понравилось: </b><span th:text="${element.likeBlog}"/></p>
+            <br><a th:href="'/blog/' + ${element.id} + '/edit'" class="btn btn-warning">Редактировать</a>
+
             <a href="#zatemnenie" class="btn btn-warning">Удалить</a>
         </div>
     </div>

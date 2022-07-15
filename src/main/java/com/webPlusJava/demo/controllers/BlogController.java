@@ -47,6 +47,8 @@ public class BlogController {
         return "blog-main"; //возвращает шаблон блог меин.
     }
 
+
+
     @GetMapping("/blog/add")
     public String blogAdd(Model model) {
         return "blog-add";
@@ -57,6 +59,7 @@ public class BlogController {
     public String blogPostAdd(@RequestParam String title, @RequestParam String anons, @RequestParam String full_text, Model model,HttpServletRequest request, HttpServletResponse response) { // @RequestParam для получения новых параметров.
         // название для поля взяли из name="title" в blog-add.html. так же и для anons
 
+        int likeBlog = 0;
         long idUser = -1;
         String nickname = "foo";
         try {
@@ -70,7 +73,7 @@ public class BlogController {
             System.out.println("cookie has expired");
         }
         if (idUser > 0) {
-            Post post = new Post(title, anons, full_text, idUser, nickname); // создали объект внутри java
+            Post post = new Post(title, anons, full_text, idUser, nickname, likeBlog); // создали объект внутри java
             postRepository.save(post); // обращаемся в рпозиторий ( в нашем случае postRepository , вызываем  save для сохранения объекта post
             return "redirect:/blog"; //будет кидать на страничку блог после нажатия на кнопку добавить
         }
@@ -96,6 +99,7 @@ public class BlogController {
         post2.setViews(viewsNew);
         postRepository.save(post2);
 
+
         long idUser = -1;
         try {
             Cookie[] cookies = request.getCookies();
@@ -112,6 +116,44 @@ public class BlogController {
         }
 
         return "blog-details-unlogin";
+    }
+
+
+    @PostMapping("/blog/{dynamicID}/likeBlog")//todo лайки
+    public String blogMain(@PathVariable(value = "dynamicID") long dynamicID, Model model,HttpServletRequest request){
+       //проверка на залогиненость
+
+        //проверка на ЛАЙК id
+
+
+
+        //плюсуем лайк
+        Post post = postRepository.findById(dynamicID).orElseThrow();
+        int likeBlog = post.getLikeBlog();
+        likeBlog ++;
+        post.setLikeBlog(likeBlog);
+        postRepository.save(post);
+
+        //добавляем id лайка к себе в бд
+
+        String forIdBlogLike = "";
+        long idUser = -1;
+        try {
+            Cookie[] cookies = request.getCookies();
+            for (Cookie cookie : cookies){
+                idUser = Long.parseLong(cookie.getValue()); //читаем id юзера
+            }
+        }catch (Exception e1){
+            System.out.println("cookie has expired");
+        }
+        LoginPassword loginPassword = loginPasswordRepository.findById(idUser).orElseThrow();
+        forIdBlogLike = loginPassword.getIdBlogLike() + "," + dynamicID ;
+
+        loginPassword.setIdBlogLike(forIdBlogLike);
+        loginPasswordRepository.save(loginPassword);
+
+
+        return "redirect:/blog";
     }
 
 
