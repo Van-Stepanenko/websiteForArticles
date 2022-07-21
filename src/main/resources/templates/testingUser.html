@@ -9,17 +9,25 @@
 
 
 <header th:insert="blocks/header :: header"></header>
+<form th:action="'/testingUser'" method="post"> <!-- все продящее по адресу ремувается -->
+    <button class="btn btn-warning mt-2" type="submit">Рандомайс</button> <!-- кнопка / type="submit" - перезагружает страницу и отправляет данные -->
+</form>
+
+
+
 <div class = "container mt-5"> <!--  mt - отступ сверху 50 пикс -->
     <div th:each="element : ${post}" class="alert alert-info mt-2"><!-- перебераю все post (записи) который к нам приходят из БД-->
         <h1 th:text="${element.title}"/>
         <p th:text="${element.full_text}"/>
-        <p><b>Просмотры: </b><span th:text="${element.views}"/></p>
-        <a href="/blog" class="btn btn-warning">Назад</a>
+        <form th:action="'/testingUser'" method="post"> <!-- все продящее по адресу ремувается -->
+            <button class="btn btn-warning mt-2" type="submit">Рандомайс</button> <!-- кнопка / type="submit" - перезагружает страницу и отправляет данные -->
+        </form>
+        <a href="/blog" class="btn btn-warning">НазадOK</a>
     </div>
 </div>
 <div th:insert="blocks/footer :: footer"></div>
 
-        <!-- /<body>  -->
+<!-- /<body>  -->
 
 
 <!-- <body>  -->

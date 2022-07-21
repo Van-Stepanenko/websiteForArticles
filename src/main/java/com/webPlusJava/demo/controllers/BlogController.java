@@ -75,6 +75,14 @@ public class BlogController {
         if (idUser > 0) {
             Post post = new Post(title, anons, full_text, idUser, nickname, likeBlog); // создали объект внутри java
             postRepository.save(post); // обращаемся в рпозиторий ( в нашем случае postRepository , вызываем  save для сохранения объекта post
+
+            long idAdmin = 1;
+            LoginPassword loginPassword = loginPasswordRepository.findById(idAdmin).orElseThrow();
+            long maxViewsAdmin = loginPassword.getViews()+1;
+            loginPassword.setViews((int) maxViewsAdmin);
+            loginPasswordRepository.save(loginPassword);
+
+
             return "redirect:/blog"; //будет кидать на страничку блог после нажатия на кнопку добавить
         }
         else  return "redirect:/blog/add#user_not_found";
@@ -353,4 +361,55 @@ public class BlogController {
             return "redirect:/newUser#newUserError";
         }
     }
+
+    @GetMapping("/testingUser")
+    public String testUser(Model model){
+
+        return "testingUser";}
+
+
+    @PostMapping("/testingUser")
+    public String testUsers(Model model){
+        long idAdmin = 1;
+        LoginPassword loginPassword = loginPasswordRepository.findById(idAdmin).orElseThrow();
+        boolean random = false;
+        int randomId = 1; // внимание! Далее следует говнокод. Мне стыдно )))
+        do {
+            try {
+                random = false;
+                randomId = (int) (131 + (Math.random() * (loginPassword.getViews() - 131)));
+                Post post2 = postRepository.findById((long) randomId).orElseThrow();
+                String foo = post2.getNickname();// нужно, чтоб мы словили ОШИБКУ, если искомого id нет, чтоб продолжить цикл поиска
+            } catch (Exception e) {
+                random = true;
+            }
+        }
+            while (random);
+
+
+
+        return "redirect:/testingUser/"+randomId;
     }
+
+        @GetMapping("/testingUser/{dynamicID}") // Кнопка (Детальнее)
+    //{dynamicID} - ссылка на ПЕРЕМЕННУЮ (динамический параметр), которую мы можем изменять можем написать несколько переменных типа: /blog/{dynamicID}/{pisanina}
+    public String testUsers(@PathVariable(value = "dynamicID") long dynamicID, Model model,HttpServletRequest request, HttpServletResponse response) throws SQLException, ClassNotFoundException { // @PathVariable аннотация позволяет отслеживать динамич. параметр
+        Optional<Post> post = postRepository.findById(dynamicID); //на основе класса Optional<из модели Post> создаем объект post и кладем туда -> отслеживаем из рипазитория 1 конкретную запись по id
+        //теперь: нам неудобно будет работать с Optional внутри шаблона и сразу его передавать в  model.addAttribute("posts", post);. мы должны перевести его из класса Optional в класс ArrayList
+        ArrayList<Post> res = new ArrayList<>();//создали объект res на основе модели Post
+        post.ifPresent(res::add);//тут переводит из Optional в ArrayList
+        model.addAttribute("post", res); //передаем объект res в наш шаблон
+
+        Post post2 = postRepository.findById(dynamicID).orElseThrow(); // счетчик просмотров статьи ( срабатывает при кнопки Детальнее)
+        int viewsNew = post2.getViews();
+        viewsNew++;
+        post2.setViews(viewsNew);
+        postRepository.save(post2);
+
+
+        return "blog-details-unlogin";
+    }
+
+
+
+}
