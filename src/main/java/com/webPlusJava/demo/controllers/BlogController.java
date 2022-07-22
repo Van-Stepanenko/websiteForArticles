@@ -405,11 +405,12 @@ public class BlogController {
         viewsNew++;
         post2.setViews(viewsNew);
         postRepository.save(post2);
-
-
-        return "blog-details-unlogin";
+        return "testingUser";
     }
 
-
-
+    /*@PostMapping( "/testingUser/{dynamicID}/answerToQuestion")
+    public String answerToQuestion ( Model model){
+        return "redirect:/testingUser/{dynamicID}/answers";
+    }
+*/
 }
